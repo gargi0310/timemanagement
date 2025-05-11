@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Semesters Timetable</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 40px; }
+    th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    h2 { margin-top: 50px; color: #333; }
+  </style>
+</head>
+<body>
+  <h1>All Semesters Timetable</h1>
+
+  <% timetables.forEach(t => { 
+       const timeSlots = [...new Set(t.entries.map(e => e.day))];
+  %>
+    <h2>Semester <%= t.semester %></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Time Slot</th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% timeSlots.forEach(slot => { %>
+          <tr>
+            <td><%= slot %></td>
+            <% ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
+                 const entry = t.entries.find(e => e.day === slot && e.slot === day);
+            %>
+              <td><%= entry ? entry.subject : '' %></td>
+            <% }) %>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% }) %>
+</body>
+</html>

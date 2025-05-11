@@ -1,0 +1,617 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Colors */
+:root {
+  --primary: #800000;
+  --accent: #04ad83;
+  --text-dark: #333;
+  --text-light: #fff;
+  --bg-light: #f8f9fa;
+  --bg-dark: #222;
+}
+
+/* Body */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+}
+
+/* Navbar */
+nav {
+  background: var(--primary);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 30px;
+  position: sticky;
+  top: 0;
+}
+
+nav strong {
+  font-size: 1.4rem;
+  margin-right: 20px;
+}
+
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+nav a:hover {
+  background-color: white;
+  color: var(--primary);
+}
+
+nav button {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin-left: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+nav button:hover {
+  background-color: #03886a;
+}
+
+/* Hero Section */
+section {
+  text-align: center;
+  padding: 60px 20px;
+  background: #ccc;
+  color: white;
+}
+
+section img {
+  width: 350px;
+  margin-bottom: 20px;
+}
+
+section h1 {
+  color: #201e5b;
+  font-size: 2rem;
+  margin-top: 5px;
+  margin-bottom: 30px;
+}
+
+section button {
+  padding: 12px 24px;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+
+}
+
+section button:hover {
+  background-color: #a00000;
+}
+
+/* Modal Forms */
+#loginModal,
+#signupModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95); /* Slight transparency */
+  color: var(--text-dark);
+  padding: 25px 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  max-width: 420px;
+  width: 90%;
+  z-index: 1000;
+  backdrop-filter: blur(1px); /* Optional: soft blur behind modal */
+}
+
+
+/* Close Button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.modal-close:hover {
+  color: #000;
+}
+
+/* Form Styles */
+form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--primary);
+}
+
+form label {
+  font-weight: 600;
+  margin: 8px 0 4px;
+  display: block;
+  font-size: 14px;
+}
+
+form select,
+form input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+form input:focus,
+form select:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+form button[type="submit"] {
+  background-color: var(--accent);
+  color: white;
+  font-weight: bold;
+  padding: 9px 0;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+form button[type="submit"]:hover {
+  background-color: #03886a;
+}
+
+form p {
+  font-size: 13px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+form p a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 20px 0;
+  background: var(--primary);
+  color: white;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav div:last-child {
+    margin-top: 10px;
+  }
+
+  section h1 {
+    font-size: 1.6rem;
+  }
+
+  form {
+    padding: 20px;
+  }
+}
+
+
+/*about section*/
+
+.about-section {
+  min-height: 100vh; /* full screen */
+  background-color: var(--bg-light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+
+}
+
+.about-content {
+  max-width: 800px;
+  text-align: center;
+  background: var(--bg-dark);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.about-content h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: var(--primary);
+}
+
+.about-content p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-light);
+  margin-bottom: 18px;
+}
+.features-grid {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+.feature-card {
+  background-color: var(--bg-light);
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  width: 250px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+}
+
+.feature-card img {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+}
+
+.feature-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: var(--primary);
+}
+
+.feature-card p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+}
+.feature-card i {
+  font-size: 28px;
+  color: white;
+  background-color: var(--accent);
+  padding: 12px;
+  border-radius: 50%;
+  margin-bottom: 12px;
+}
+[data-lucide] {
+  stroke: var(--primary);
+  width: 40px;
+  height: 40px;
+  transition: stroke 0.3s ease;
+}
+
+[data-lucide]:hover {
+  stroke: var(--accent);
+}
+
+
+.timeline {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.timeline-item {
+  width: 220px;
+  text-align: center;
+  margin: 20px 10px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.timeline-item:hover {
+  transform: scale(1.05);
+}
+
+.timeline-item h4 {
+  color: var(--primary);
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.timeline-item p {
+  color: #444;
+  font-size: 0.95rem;
+}
+
+/*featurs section*/
+/* Features Section Styling */
+.features-section {
+  padding: 80px 20px;
+  background-color: var(--bg-light);
+  text-align: center;
+}
+
+.features-section h2 {
+  font-size: 2.8rem;
+  color: var(--primary);
+  margin-bottom: 40px;
+  font-weight: 700;
+}
+
+.features-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.feature-item {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.feature-item i {
+  font-size: 3rem;
+  color: var(--accent);
+  margin-bottom: 15px;
+}
+
+.feature-item h3 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.feature-item p {
+  font-size: 1rem;
+  color: #f2f2f2;
+}
+
+.cta-wrapper {
+  margin-top: 60px;
+}
+
+.cta-wrapper h3 {
+  font-size: 1.8rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.cta-button {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background 0.3s ease;
+
+  }
+
+.cta-button:hover {
+  background-color: #03886a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .features-wrapper {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .cta-wrapper h3 {
+    font-size: 1.5rem;
+  }
+}
+
+/*FAQ Section*/
+/* FAQ Section */
+.faq-section {
+  padding: 80px 20px;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.faq-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.faq-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.faq-item {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  transition: box-shadow 0.3s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.faq-question {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.faq-answer {
+  font-size: 1rem;
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .faq-section h2 {
+    font-size: 2rem;
+  }
+
+  .faq-question {
+    font-size: 1.2rem;
+  }
+
+  .faq-answer {
+    font-size: 0.95rem;
+  }
+}
+/* Contact Section */
+.contact-section {
+  padding: 80px 20px;
+  background: var(--bg-dark);
+  color: var(--text-light);
+  text-align: center;
+}
+
+.contact-section h2 {
+  color: var(--accent);
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.contact-intro {
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+  color: #ccc;
+}
+
+.contact-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+}
+
+.contact-form {
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.contact-form textarea {
+  resize: none;
+}
+
+.contact-form button {
+  background: var(--accent);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.contact-form button:hover {
+  background: #03886a;
+}
+
+.contact-info {
+  flex: 1;
+  max-width: 400px;
+  text-align: left;
+}
+
+.contact-info h3 {
+  font-size: 1.6rem;
+  margin-bottom: 15px;
+  color: var(--accent);
+}
+
+.contact-info p {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.contact-icons {
+  margin-top: 20px;
+}
+
+.contact-icons i {
+  font-size: 24px;
+  margin-right: 15px;
+  color: var(--accent);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact-info,
+  .contact-form {
+    width: 100%;
+    max-width: 500px;
+  }
+}

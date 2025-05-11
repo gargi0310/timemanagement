@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <!-- <link rel="stylesheet" href="Adminstyles.css"> -->
+  <script>
+
+    // Dummy timetable and users data for demonstration
+const submittedTimetables = {
+  1: {
+    "Monday": ["C Programming", "", "Math", "", "", "", ""],
+    "Tuesday": ["", "English", "", "", "", "", ""],
+    "Wednesday": ["", "", "", "", "", "", ""],
+    "Thursday": ["", "", "", "", "", "", ""],
+    "Friday": ["", "", "", "", "", "", ""]
+  },
+  2: { /* Similar structure for semester 2 */ },
+  // ... up to semester 6
+};
+
+const users = [
+  { id: 1, name: "Prof. A", role: "professor", department: "CS", workload: 8 },
+  { id: 2, name: "Student X", role: "student", department: "CS" }
+];
+
+// Load timetables
+function loadSemesterTimetables() {
+  for (let sem = 1; sem <= 6; sem++) {
+    const table = document.getElementById(`timetable-sem${sem}`);
+    if (!table) continue;
+    populateTableFromData(table, submittedTimetables[sem] || {});
+  }
+}
+
+// Populate timetable with data
+function populateTableFromData(table, data) {
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const timeSlots = 6;
+  let rows = table.rows;
+
+  for (let i = 1; i <= timeSlots; i++) {
+    for (let j = 1; j <= days.length; j++) {
+      let cell = rows[i].cells[j];
+      const subject = data[days[j - 1]]?.[i - 1];
+      if (subject) {
+        cell.textContent = subject;
+        cell.classList.add("selected");
+      } else {
+        cell.textContent = "";
+        cell.classList.remove("selected");
+      }
+
+      // Click to edit slot
+      cell.onclick = function () {
+        if (cell.classList.contains("booked")) return;
+        const newSub = prompt("Enter subject name:");
+        const newProf = prompt("Assign professor:");
+        if (newSub && newProf) {
+          cell.textContent = `${newSub} (${newProf})`;
+          cell.classList.add("selected");
+        }
+      };
+    }
+  }
+}
+
+// Display users
+function displayUsers() {
+  const userList = document.getElementById("userList");
+  userList.innerHTML = "";
+
+  users.forEach(user => {
+    const div = document.createElement("div");
+    div.className = "user-card";
+
+    div.innerHTML = `
+      <h4>${user.name}</h4>
+      <p>Role: ${user.role}</p>
+      <p>Department: ${user.department}</p>
+      ${user.role === "professor" ? `<p>Workload: ${user.workload}</p>` : ""}
+      <button onclick="viewProfile(${user.id})">View Profile</button>
+      <button onclick="deleteUser(${user.id})">Delete</button>
+    `;
+    userList.appendChild(div);
+  });
+}
+
+// Delete user
+function deleteUser(id) {
+  const index = users.findIndex(u => u.id === id);
+  if (index !== -1 && confirm("Are you sure to delete this user?")) {
+    users.splice(index, 1);
+    displayUsers();
+  }
+}
+
+// View profile modal
+function viewProfile(id) {
+  const user = users.find(u => u.id === id);
+  if (!user) return;
+
+  const modal = document.getElementById("profileModal");
+  const content = document.getElementById("modalContent");
+
+  content.innerHTML = `
+    <div class="modal-header">
+      <h3>${user.name}'s Profile</h3>
+      <span class="close" onclick="closeModal()">&times;</span>
+    </div>
+    <p><strong>Role:</strong> ${user.role}</p>
+    <p><strong>Department:</strong> ${user.department}</p>
+    ${user.role === "professor" ? `<p><strong>Workload:</strong> ${user.workload} slots/week</p>` : ""}
+    <button onclick="editProfile(${id})">Edit Profile</button>
+  `;
+  modal.style.display = "block";
+}
+
+function closeModal() {
+  document.getElementById("profileModal").style.display = "none";
+}
+
+// Edit profile (basic)
+function editProfile(id) {
+  const user = users.find(u => u.id === id);
+  if (!user) return;
+
+  const newName = prompt("Enter new name:", user.name);
+  if (newName) user.name = newName;
+  displayUsers();
+  viewProfile(id);
+}
+
+// Initial load
+window.onload = () => {
+  loadSemesterTimetables();
+  displayUsers();
+};
+const timetableStructure = `
+      <table class="timetable">
+        <tr><th>Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
+        <tr><th>09:30 - 10:30</th><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>10:30 - 11:30</th><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>11:30 - 12:30</th><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>12:30 - 01:30</th><td colspan="5">Break</td></tr>
+        <tr><th>01:30 - 02:30</th><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>02:30 - 03:30</th><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>03:30 - 04:30</th><td></td><td></td><td></td><td></td><td></td></tr>
+      </table>
+    `;
+
+    async function showSemester(sem) {
+  const container = document.getElementById('semester-tables');
+  container.innerHTML = `<h3>Semester ${sem}</h3>` + timetableStructure;
+
+  const table = container.querySelector('.timetable');
+  try {
+    const response = await fetch(`/timetable/${sem}`);
+    if (!response.ok) throw new Error("Timetable not found");
+
+    const timetable = await response.json();
+
+    // Convert entries to slot structure if needed
+    const slotsByDay = {};
+    for (const entry of timetable.entries) {
+      if (!slotsByDay[entry.day]) slotsByDay[entry.day] = [];
+      slotsByDay[entry.day].push(entry);
+    }
+
+    console.log(slotsByDay);
+
+    populateTableFromData(table, slotsByDay); // Or adapt this to your structure
+  } catch (err) {
+    console.error(err);
+    alert(`Failed to load timetable for Semester ${sem}`);
+  }
+}
+
+    function displayUsers() {
+      // TODO: Load user list (professors/students), allow delete/edit
+      //alert("User management popup would show here");
+    }
+
+    function logout() {
+      window.location.href = '/logout';
+    }
+
+  </script>
+  <style>
+    /* General layout */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f9;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+/* Info section */
+.admin-info {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+button {
+  padding: 8px 16px;
+  margin: 10px 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Timetables */
+.semester-container {
+  margin-bottom: 40px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.semester-title {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #34495e;
+}
+
+.timetable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #fafafa;
+}
+
+table { border-collapse: collapse; width: 100%; margin-bottom: 40px; }
+    th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+    th { background-color: #f2f2f2; }
+    h2 { margin-top: 50px; color: #333; }
+
+.timetable th,
+.timetable td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.timetable th {
+  background-color: #e0eafc;
+  color: #333;
+}
+
+.timetable td.selected {
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+}
+
+.timetable td.booked {
+  background-color: #cccccc !important;
+  color: #555;
+  pointer-events: none;
+}
+
+/* Break row */
+.timetable .break {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+/* User management */
+.user-panel {
+  margin-top: 30px;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-panel h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.user-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.user-card {
+  flex: 0 1 200px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  background-color: #fafafa;
+  text-align: center;
+}
+
+.user-card h4 {
+  margin: 8px 0;
+}
+
+.user-card button {
+  margin: 4px 2px;
+  font-size: 12px;
+}
+
+/* Modal (for viewing professor profile) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  padding-top: 100px;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 8px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.close {
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-list {
+    flex-direction: column;
+  }
+
+  .user-card {
+    width: 100%;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+    <button onclick="logout()">Logout</button>
+  </header>
+
+  <section class="admin-info">
+    <p><strong>Admin:</strong> <%= user %> </p>
+    <p><strong>Department:</strong> <%= dept %></p>
+  </section>
+
+  <section class="controls">
+    <button onclick="displayUsers()">Manage Users</button>
+    <% if (users && users.length > 0) { %>
+      <div class="user-list">
+        <h3>Registered Users</h3>
+        <ul>
+          <% users.forEach(u => { %>
+            <li><strong><%= u.name %></strong> - <%= u.department %> -- <%= u.role %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } else if (typeof users !== "undefined") { %>
+      <p>No users found in <%= dept %> department.</p>
+    <% } %>
+  </section>
+
+  <section class="timetables">
+    <h2>Semester Timetables</h2>
+    <!-- <div class="semester-tabs">
+      <button onclick="showSemester(1)">Semester 1</button>
+      <button onclick="showSemester(2)">Semester 2</button>
+      <button onclick="showSemester(3)">Semester 3</button>
+      <button onclick="showSemester(4)">Semester 4</button>
+      <button onclick="showSemester(5)">Semester 5</button>
+      <button onclick="showSemester(6)">Semester 6</button>
+    </div> -->
+
+    <div id="semester-tables">
+      <!-- Semester tables will be inserted here dynamically -->
+    </div>
+
+    <!-- <a href="/timetable-all">View All Semester Timetables</a> -->
+    <h1>All Semesters Timetable</h1>
+
+    <% timetables.forEach(t => { 
+         const timeSlots = [...new Set(t.entries.map(e => e.day))];
+    %>
+      <h2>Semester <%= t.semester %></h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Time Slot</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% timeSlots.forEach(slot => { %>
+            <tr>
+              <td><%= slot %></td>
+              <% ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].forEach(day => {
+                   const entry = t.entries.find(e => e.day === slot && e.slot === day);
+              %>
+                <td><%= entry ? entry.subject : '' %></td>
+              <% }) %>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% }) %>
+
+  </section>
+
+  <section class="user-list" id="userList">
+    <!-- User cards populated by JS -->
+  </section>
+
+  <!-- Modal for Profile -->
+  <div id="profileModal" class="modal">
+    <div class="modal-content" id="modalContent">
+      <!-- Dynamic content -->
+    </div>
+  </div>
+
+</body>
+</html>

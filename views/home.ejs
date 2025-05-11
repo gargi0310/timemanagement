@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scheduler</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div>
+      <strong>TMV</strong>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#features">Features</a>
+      <a href="#faq">FAQ's</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div>
+      <button onclick="openLogin()">Login</button>
+      <button onclick="openSignup()">Signup</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home">
+    <img src="tmv_logo.png" alt="Logo" />
+    <h1>Welcome to Scheduler!</h1>
+    <button onclick="openLogin()">Get Started</button>
+  </section>
+    <!-- about Section -->
+  <section id="about" class="about-section">
+  <div class="about-content">
+    <h2>About Scheduler</h2>
+    <p>
+      Scheduler is a smart timetable assistant built to reduce chaos and bring structure to your academic life. From auto-assigning lectures to managing changes, it's designed for efficiency.
+    </p>
+
+    <div class="features-grid">
+
+      <div class="feature-card">
+    <i data-lucide="calendar-clock"></i>
+    <h3>Smart Scheduling</h3>
+    <p>Automatically generate optimized lecture timetables based on availability, workload, and course needs.</p>
+  </div>
+
+  <div class="feature-card">
+    <i data-lucide="shield-check"></i>
+    <h3>Role-Based Access</h3>
+    <p>Admins, Professors, and Students get unique dashboards to manage their responsibilities easily.</p>
+  </div>
+
+    <div class="timeline">
+  <div class="timeline-item">
+    <h4>📅 Plan</h4>
+    <p>Define department-wise slots, subjects, and teacher preferences.</p>
+  </div>
+  <div class="timeline-item">
+    <h4>🛠️ Generate</h4>
+    <p>Let the algorithm auto-create fair, balanced timetables.</p>
+  </div>
+  <div class="timeline-item">
+    <h4>🔄 Manage</h4>
+    <p>Make real-time changes and publish updates effortlessly.</p>
+  </div>
+</div>
+    </div>
+  </div>
+</section>
+<!-- Features Section -->
+<section id="features" class="features-section">
+  <h2>Why Choose Scheduler?</h2>
+  <div class="features-wrapper">
+    <div class="feature-item">
+      <i data-lucide="calendar-clock" class="feature-icon"></i>
+      <h3>Effortless Time Management</h3>
+      <p>Streamline the process of scheduling lectures and meetings with our intuitive scheduling tools, saving you valuable time.</p>
+    </div>
+    <div class="feature-item">
+      <i data-lucide="shield-check" class="feature-icon"></i>
+      <h3>Secure & Customizable Access</h3>
+      <p>Tailor the system with role-based permissions, ensuring that Admins, Professors, and Students have the right access.</p>
+    </div>
+    <div class="feature-item">
+      <i data-lucide="bell-ring" class="feature-icon"></i>
+      <h3>Stay Informed with Alerts</h3>
+      <p>Receive timely notifications for any schedule changes or updates, keeping you on top of your commitments.</p>
+    </div>
+  </div>
+  <div class="cta-wrapper">
+
+    <h3>Get Started Now! <button class="cta-button" onclick="switchToSignup()" >Sign Up Today</button></h3>
+  </div>
+</section>
+
+
+<!-- FAQ Section -->
+<section id="faq" class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-container">
+    <div class="faq-item">
+      <h3 class="faq-question">How do I sign up for a new account?</h3>
+      <p class="faq-answer">Click on the "Get Started" button on the homepage, fill in your details based on your role, and create your account in just a few steps.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">Can I edit my timetable after it’s generated?</h3>
+      <p class="faq-answer">Yes! Admins can make updates to any timetable directly from the dashboard. Professors can also request changes for consideration.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">Is my data secure?</h3>
+      <p class="faq-answer">Absolutely. Your data is protected with role-based access and secure authentication protocols to ensure safety and privacy.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">Do I get reminders for lectures?</h3>
+      <p class="faq-answer">Yes, the system sends out notifications and reminders before each scheduled lecture so you’ll never miss a session.</p>
+    </div>
+  </div>
+</section>
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+  <h2>Contact Us</h2>
+  <p class="contact-intro">Have questions, feedback, or suggestions? We'd love to hear from you!</p>
+
+  <div class="contact-container">
+    <form class="contact-form" action="#" method="POST">
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Your Email" required />
+      <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+
+    <div class="contact-info">
+      <h3>Get in Touch</h3>
+      <p><strong>Email:</strong> support@scheduler.com</p>
+      <p><strong>Phone:</strong> +91-9876543210</p>
+      <p><strong>Location:</strong> TMV Campus, Pune, India</p>
+      <div class="contact-icons">
+        <i data-lucide="mail"></i>
+        <i data-lucide="phone"></i>
+        <i data-lucide="map-pin"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+  <!-- Login Modal -->
+  <div id="loginModal" style="display: none;">
+    <span class="modal-close" onclick="closeModals()">×</span>
+
+    <form action="/login" method="POST">
+      <h2>Login</h2>
+
+      <label>Department:</label>
+      <select name="department" required>
+        <option value="" disabled selected>Select Department</option>
+        <option>Arts</option>
+        <option>Aurveda</option>
+        <option>BBA</option>
+        <option>BCA</option>
+        <option>Commerce</option>
+        <option>Hotel Management</option>
+        <option>Law</option>
+        <option>Mass Media</option>
+        <option>MCA</option>
+        <option>Physiotherapy</option>
+        <option>Yoga</option>
+        <option>Other</option>
+      </select>
+
+      <label>Login As:</label>
+      <select name="role" required>
+        <option value="Admin">Admin</option>
+        <option value="Professor">Professor</option>
+        <option value="Student">Student</option>
+      </select>
+
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+
+      <p>Don't have an account? <a href="#" onclick="switchToSignup()">Signup</a></p>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signupModal" style="display: none;">
+    <span class="modal-close" onclick="closeModals()">×</span>
+
+    <form action="/signup" method="POST">
+      <h2>Register Here!</h2>
+
+      <label>Department:</label>
+      <select name="department" required>
+        <option value="" disabled selected>Select Department</option>
+        <option>Arts</option>
+        <option>Aurveda</option>
+        <option>BBA</option>
+        <option>BCA</option>
+        <option>Commerce</option>
+        <option>Hotel Management</option>
+        <option>Law</option>
+        <option>Mass Media</option>
+        <option>MCA</option>
+        <option>Physiotherapy</option>
+        <option>Yoga</option>
+        <option>Other</option>
+      </select>
+
+      <label>Signup As:</label>
+      <select name="role" required>
+        <option value="Admin">Admin</option>
+        <option value="Professor">Professor</option>
+        <option value="Student">Student</option>
+      </select>
+
+      <input type="text" name="name" placeholder="First Name" required />
+      <input type="text" name="surname" placeholder="Last Name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="text" name="phone" placeholder="Phone" required />
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
+
+      <button type="submit">Register</button>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Scheduler App. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function openLogin() {
+      document.getElementById("loginModal").style.display = "block";
+      document.getElementById("signupModal").style.display = "none";
+    }
+
+    function openSignup() {
+      document.getElementById("signupModal").style.display = "block";
+      document.getElementById("loginModal").style.display = "none";
+    }
+
+    function switchToSignup() {
+      openSignup();
+    }
+
+    window.onclick = function(event) {
+      if (event.target.className === "modal") {
+        event.target.style.display = "none";
+      }
+    };
+    function closeModals() {
+  document.getElementById("loginModal").style.display = "none";
+  document.getElementById("signupModal").style.display = "none";
+}
+
+
+  lucide.createIcons();
+
+  </script>
+
+</body>
+</html>

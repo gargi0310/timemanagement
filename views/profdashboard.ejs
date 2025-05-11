@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <!-- Add Axios CDN -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <link rel="stylesheet" href="dashboard.css">
+  <style>
+    td.selected {
+      background-color: #d0f0c0;
+      font-weight: bold;
+      text-align: center;
+    }
+    .break {
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+
+    body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: #f7f7f7;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.info {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+}
+
+.subject-list ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+table.timetable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+}
+
+table.timetable th,
+table.timetable td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+table.timetable th {
+  background-color: #ddeeff;
+  color: #333;
+}
+
+table.timetable .break {
+  background-color: #ffefc1;
+  font-weight: bold;
+}
+
+table.timetable td.selected {
+  background-color: #6cbf84;
+  color: white;
+}
+
+button {
+  display: block;
+  margin: 30px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #005fa3;
+}
+
+#timetable td {
+  font-size: 12px; /* Smaller text */
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px;
+  cursor: pointer;
+}
+
+#timetable td.selected {
+  background-color: #04ad83; /* light blue for selected */
+  font-size: 13px; /* slightly bigger when subject is selected */
+  font-weight: bold;
+}
+
+.output {
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 15px;
+  background-color: #f1f1f1;
+  border-left: 4px solid #007bff;
+}
+.output ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+.output li {
+  margin: 5px 0;
+}
+
+.submission-block {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #007bff;
+  font-size: 14px;
+}
+.submission-block ul {
+  list-style: none;
+  padding-left: 0;
+}
+.submission-block li {
+  margin: 4px 0;
+}
+
+.generated-timetable {
+  margin-top: 30px;
+}
+.generated-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.generated-table th,
+.generated-table td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+.generated-table th {
+  background-color: #f2f2f2;
+}
+#timetable {
+  background-color: #fff;
+  border-collapse: collapse;
+  margin: 20px 0;
+  width: 100%;
+}
+#timetable td, #timetable th {
+  border: 1px solid #999;
+  padding: 8px;
+  text-align: center;
+}
+#generatedTimetableContainer {
+  margin-top: 20px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+#generatedTimetableContainer h3 {
+  margin-bottom: 5px;
+}
+
+#generatedTimetableContainer ul {
+  padding-left: 20px;
+}
+td.booked {
+  background-color: #cccccc !important;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  pointer-events: none;
+}
+
+  </style>
+  <script>
+    const subjects = {
+  1: ['Computer Fundamentals And Network (CFNF)', 'C Programming', 'Mathematics', 'English', 'Sanskrit', 'Nitishataka Purvardha (Marathi)', 'Gender Perspectives', 'Operating System (OS)', 'Logic Development', 'C Programming (PR)'],
+  2: ['Object Oriented Programming using C++', 'Statistics', 'Structured System Analysis and Design (SSAD)', 'Principles and Practices of Management - I (PPM-I)', 'Communication Skills', 'Yoga', 'Nitishataka Uttarardha (Marathi)', 'Moral Values', 'Indian Knowledge System (IKS)', 'Object Oriented Programming using C++ (PR)'],
+  3: ['Advanced Web Designing (AWD)', 'Database Management System (DBMS)', 'Environmental Studies', 'Principles and Practices of Management - II (PPM-II)', 'Marathi', 'Japanese', 'Advanced Excel', 'Introduction to IoT', 'Advanced Web Designing (PR)'],
+  4: ['Advanced Database Management System (ADBMS)', 'Java Programming', 'Software Testing & Quality Assurance (SQT)', 'Unified Modeling Language(UML)', 'Content Writing', 'Soft Skills', 'Personality Development', 'Fundamentals of Share Trading', 'Java Programming (PR)', 'Advanced Database Management System (PR)'],
+  5: ['Python Programming', 'Linux', 'C# Basics', 'E-Commerce', 'Data Mining', 'Business Applications (BA)', 'Management Information System', 'Python Programming (PR)', 'Linux (PR)'],
+  6: ['Advanced Java', 'Android Application Development', 'Cloud Technology', 'Project', 'Organizational Behavior (OB)', 'Digital Marketing (DM)', 'Internship', 'Advanced Java (PR)', 'Android Application Development (PR)', 'Cloud Technology (PR)']
+};
+
+const subjectCredits = {
+  'Computer Fundamentals And Network (CFNF)': 3,
+  'C Programming': 3,
+  'Mathematics': 4,
+  'English': 2,
+  'Sanskrit': 2,
+  'Nitishataka Purvardha (Marathi)': 2,
+  'Gender Perspectives': 2,
+  'Operating System (OS)': 3,
+  'Logic Development': 2,
+  'C Programming (PR)': 1,
+  'Object Oriented Programming using C++': 3,
+  'Statistics': 4,
+  'Structured System Analysis and Design (SSAD)': 3,
+  'Principles and Practices of Management - I (PPM-I)': 3,
+  'Communication Skills': 2,
+  'Yoga': 2,
+  'Nitishataka Uttarardha (Marathi)': 2,
+  'Moral Values': 2,
+  'Indian Knowledge System (IKS)': 2,
+  'Object Oriented Programming using C++ (PR)': 1,
+  'Advanced Web Designing (AWD)': 3,
+  'Database Management System (DBMS)': 3,
+  'Environmental Studies': 4,
+  'Principles and Practices of Management - II (PPM-II)': 3,
+  'Marathi': 2,
+  'Japanese': 2,
+  'Advanced Excel': 2,
+  'Introduction to IoT': 2,
+  'Advanced Web Designing (PR)': 1,
+  'Advanced Database Management System (ADBMS)': 3,
+  'Java Programming': 3,
+  'Software Testing & Quality Assurance (SQT)': 3,
+  'Unified Modeling Language(UML)': 3,
+  'Content Writing': 2,
+  'Soft Skills': 2,
+  'Personality Development': 2,
+  'Fundamentals of Share Trading': 2,
+  'Java Programming (PR)': 1,
+  'Advanced Database Management System (PR)': 1,
+  'Python Programming': 3,
+  'Linux': 3,
+  'C# Basics': 2,
+  'E-Commerce': 3,
+  'Data Mining': 2,
+  'Business Applications (BA)': 2,
+  'Management Information System': 3,
+  'Python Programming (PR)': 1,
+  'Linux (PR)': 1,
+  'Advanced Java': 3,
+  'Android Application Development': 3,
+  'Cloud Technology': 3,
+  'Project': 4,
+  'Organizational Behavior (OB)': 2,
+  'Digital Marketing (DM)': 2,
+  'Internship': 4,
+  'Advanced Java (PR)': 1,
+  'Android Application Development (PR)': 1,
+  'Cloud Technology (PR)': 1
+};
+
+const timeSlots = [
+  '09:30AM - 10:30AM',
+  '10:30AM - 11:30AM',
+  '11:30AM - 12:30PM',
+  '01:30PM - 02:30PM',
+  '02:30PM - 03:30PM',
+  '03:30PM - 04:30PM'
+];
+
+const submittedLectures = [];
+const submittedSubjects = new Set();
+const bookedCells = new Map(); // key: "row_col", value: subject
+const savedSemesters = new Set(); // Track semesters already submitted
+
+function updateSubjects() {
+  const sem = document.getElementById('semester').value;
+  console.log("Selected Semester:", sem);
+
+  const subjectSelect = document.getElementById('subject');
+  subjectSelect.innerHTML = '<option value="">-- Select --</option>';
+  if (subjects[sem]) {
+    subjects[sem].forEach(sub => {
+      if (submittedSubjects.has(sub)) return; // skip already submitted
+      const option = document.createElement('option');
+      option.textContent = sub;
+      option.value = sub;
+      subjectSelect.appendChild(option);
+    });
+  }
+}
+
+window.onload = function () {
+  const table = document.getElementById('timetable');
+  for (let i = 1; i < table.rows.length; i++) {
+    if (table.rows[i].cells.length === 6) {
+      for (let j = 1; j <= 5; j++) {
+        const cell = table.rows[i].cells[j];
+        const time = table.rows[i].cells[0].textContent;
+        cell.textContent = time;
+        cell.dataset.placeholder = time;
+        cell.dataset.row = i;
+        cell.dataset.col = j;
+      }
+    }
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#timetable td:not(.break)').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const subject = document.getElementById('subject').value;
+      const semester = document.getElementById('semester').value;
+
+      if (!subject || !semester) {
+        alert('Please select a semester and subject first.');
+        return;
+      }
+
+      if (submittedSubjects.has(subject)) {
+        alert(`"${subject}" has already been submitted. You cannot modify it.`);
+        return;
+      }
+
+      const maxSlots = subjectCredits[subject];
+      const selectedForSubject = document.querySelectorAll(`#timetable td.selected[data-subject="${subject}"]`).length;
+
+      const cellKey = `${cell.dataset.row}_${cell.dataset.col}`;
+
+      if (bookedCells.has(cellKey)) {
+        alert(`This slot is already booked for ${bookedCells.get(cellKey)}.`);
+        return;
+      }
+
+      if (cell.classList.contains('selected')) {
+        cell.classList.remove('selected');
+        cell.textContent = cell.dataset.placeholder;
+        cell.removeAttribute('data-subject');
+      } else {
+        if (selectedForSubject >= maxSlots) {
+          alert(`You can only select ${maxSlots} slot${maxSlots > 1 ? 's' : ''} for ${subject} because it has ${maxSlots} credit${maxSlots > 1 ? 's' : ''}.`);
+
+          return;
+        }
+        cell.classList.add('selected');
+        cell.textContent = subject;
+        cell.dataset.subject = subject;
+      }
+    });
+  });
+});
+
+function submitTimetable() {
+  const subject = document.getElementById('subject').value;
+  const semester = document.getElementById('semester').value;
+  if (!subject || !semester) {
+    alert("Please select both Semester and Subject.");
+    return;
+  }
+
+  if (submittedSubjects.has(subject)) {
+    alert(`"${subject}" has already been submitted.`);
+    return;
+  }
+
+  const selectedCells = document.querySelectorAll(`#timetable td.selected[data-subject="${subject}"]`);
+  if (selectedCells.length !== subjectCredits[subject]) {
+    alert(`Please select exactly ${subjectCredits[subject]} slots for "${subject}".`);
+    return;
+  }
+
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const subjectSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
+
+  selectedCells.forEach(cell => {
+    const row = cell.parentElement.rowIndex - 1;
+    const col = cell.cellIndex - 1;
+    const time = timeSlots[row < 3 ? row : row - 1];
+    const day = days[col];
+    subjectSchedule[day].push(time);
+
+    const cellKey = `${cell.dataset.row}_${cell.dataset.col}`;
+    bookedCells.set(cellKey, subject);
+
+    cell.classList.remove('selected');
+    cell.textContent = `Booked for ${subject}`;
+    cell.classList.add('booked');
+    cell.removeAttribute('data-subject');
+  });
+
+  submittedLectures.push({ semester, subject, schedule: JSON.parse(JSON.stringify(subjectSchedule)) });
+  submittedSubjects.add(subject);
+  updateSubjects(); // Refresh subject list
+  document.getElementById('subject').value = ''; // Reset subject dropdown
+
+  let message = `<div class="submission-block"><h3>Your lectures for Semester ${semester} - "<em>${subject}</em>":</h3><ul>`;
+  days.forEach(day => {
+    const times = subjectSchedule[day];
+    message += `<li><strong>${day}:</strong> ${times.length ? times.join(', ') : '---'}</li>`;
+  });
+  message += '</ul></div>';
+
+  document.getElementById('output').innerHTML += message;
+}
+
+function getTimetableData() {
+  const table = document.getElementById('timetable');
+  const rows = table.rows;
+  const timetableData = [];
+
+  for (let i = 1; i < rows.length; i++) { // skip header row
+    const day = rows[i].cells[0].textContent;
+
+    for (let j = 1; j < rows[i].cells.length; j++) {
+      const slot = table.rows[0].cells[j].textContent;
+      const subject = rows[i].cells[j].textContent.trim();
+
+      if (subject && subject !== 'Break') {
+        timetableData.push({
+          day,
+          slot,
+          subject,
+        });
+      }
+    }
+  }
+
+  return timetableData;
+}
+
+
+function generateFullTimetable() {
+  const semester = document.getElementById('semester').value;
+
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const timetable = {};
+  days.forEach(day => {
+    timetable[day] = {};
+    timeSlots.forEach(time => (timetable[day][time] = ''));
+  });
+
+  submittedLectures.forEach(entry => {
+    const title = `Sem ${entry.semester}: ${entry.subject}`;
+    Object.entries(entry.schedule).forEach(([day, times]) => {
+      times.forEach(time => {
+        if (!timetable[day][time]) {
+          timetable[day][time] = title;
+        } else {
+          timetable[day][time] += `, ${title}`;
+        }
+      });
+    });
+  });
+
+  let html = '<table class="generated-table"><tr><th>Time</th>';
+  days.forEach(day => (html += `<th>${day}</th>`));
+  html += '</tr>';
+
+  timeSlots.forEach(time => {
+    html += `<tr><th>${time}</th>`;
+    days.forEach(day => {
+      html += `<td>${timetable[day][time] || ''}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</table>';
+  document.getElementById('generatedTimetable').innerHTML = html;
+}
+
+
+function sendTimetableToBackend() {
+  const semester = document.getElementById("semester").value;
+  if (!semester) {
+    alert("Please select a semester.");
+    return;
+  }
+
+  // Fetch existing semesters from backend
+  axios.get('/existing-semesters')
+    .then(response => {
+      const existingSemesters = response.data.semesters.map(item => item.semester);
+      console.log("Esisting sem", existingSemesters);
+      console.log("Response data", response.data);
+
+      if (existingSemesters.includes(parseInt(semester))) {
+        alert(`Timetable for Semester ${semester} already exists.`);
+        return;
+      }
+
+      // Get timetable data to be sent
+      const data = getTimetableData();
+      console.log(data);
+      console.log("Sending timetable with Axios:", data);
+
+      const formattedData = [{
+        semester: parseInt(semester),
+        entries: data
+      }];
+
+      console.log("Sending formatted data timetable data with Axios:", formattedData);
+
+      // Send timetable data to backend
+      axios.post('http://localhost:3000/timetable', formattedData)
+        .then(response => {
+          // On success, update the UI
+          document.getElementById("sendTimetableToBackend").innerText = "Timetable saved successfully!";
+          console.log("Server response:", response.data);
+        })
+        .catch(error => {
+          // On error, update the UI
+          document.getElementById("sendTimetableToBackend").innerText = "Error saving timetable.";
+          console.error("Axios error:", error);
+        });
+    })
+    .catch(error => {
+      console.error('Error fetching existing semesters:', error);
+      alert('Failed to check existing semesters.');
+    });
+}
+
+
+function saveTimetableAsImage() {
+  const timetable = document.querySelector('.generated-table');
+  html2canvas(timetable).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'timetable.png';
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+
+function printTimetable() {
+  const timetableHTML = document.getElementById('generatedTimetable').innerHTML;
+  const win = window.open('', '', 'height=700,width=900');
+  win.document.write('<html><head><title>Print Timetable</title>');
+  win.document.write('</head><body>');
+  win.document.write(timetableHTML);
+  win.document.write('</body></html>');
+  win.document.close();
+  win.print();
+}
+
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+  <h1>Dashboard</h1>
+
+  <div class="info">
+    <p><strong>Username:</strong> <%= user %></p>
+    <p><strong>Department:</strong> <%= dept %></p>
+  </div>
+
+  <label for="semester">Select Semester:</label>
+  <select id="semester" onchange="updateSubjects()">
+    <option value="">-- Select --</option>
+    <option value="1">Semester 1</option>
+    <option value="2">Semester 2</option>
+    <option value="3">Semester 3</option>
+    <option value="4">Semester 4</option>
+    <option value="5">Semester 5</option>
+    <option value="6">Semester 6</option>
+  </select>
+
+  <label for="subject">Select Subject:</label>
+  <select id="subject">
+    <option value="">-- Select Semester First --</option>
+  </select>
+
+  <table class="timetable" id="timetable">
+    <tr>
+      <th>Time</th>
+      <th>Monday</th>
+      <th>Tuesday</th>
+      <th>Wednesday</th>
+      <th>Thursday</th>
+      <th>Friday</th>
+    </tr>
+    <tr><th>09:30AM - 10:30AM</th><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><th>10:30AM - 11:30AM</th><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><th>11:30AM - 12:30PM</th><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><th class="break">Break</th><td class="break" colspan="5">12:30PM - 01:30PM</td></tr>
+    <tr><th>01:30PM - 02:30PM</th><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><th>02:30PM - 03:30PM</th><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><th>03:30PM - 04:30PM</th><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+
+  <button onclick="submitTimetable()">Submit</button>
+  <div id="output" class="output"></div>
+
+  <button onclick="generateFullTimetable()">Create Timetable</button>
+  <div id="generatedTimetable" class="generated-timetable"></div>
+
+  <button onclick="sendTimetableToBackend()">Insert to Database</button>
+  <div id="sendTimetableToBackend" class="generated-timetable"></div>
+
+  <button onclick="saveTimetableAsImage()">Save as Image</button>
+  <button onclick="printTimetable()">Print</button>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
